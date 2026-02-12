@@ -267,7 +267,3 @@ RGB Image → LAB Conversion → Split Channels
 
 MIT License
 
----
-
-**University Project** - Deep Learning / Computer Vision
-**Date**: February 2026
