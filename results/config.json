@@ -1,0 +1,12 @@
+{
+  "data_dir": "data/train",
+  "image_size": 256,
+  "batch_size": 8,
+  "val_split": 0.1,
+  "num_workers": 4,
+  "lr_g": 0.0002,
+  "lr_d": 0.0002,
+  "beta1": 0.5,
+  "beta2": 0.999,
+  "l1_lambda": 100.0
+}

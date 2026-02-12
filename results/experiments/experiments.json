@@ -1,0 +1,94 @@
+{
+  "exp_001_baseline": {
+    "timestamp": "2026-02-12T18:23:25.400195",
+    "config": {
+      "batch_size": 16,
+      "lr_g": 0.0002,
+      "l1_lambda": 100,
+      "num_epochs": 50
+    },
+    "metrics": {
+      "psnr": {
+        "mean": 24.12,
+        "std": 3.1
+      },
+      "ssim": {
+        "mean": 0.8,
+        "std": 0.05
+      },
+      "l1_error": {
+        "mean": 0.085
+      }
+    },
+    "notes": "Baseline pix2pix model"
+  },
+  "exp_002_lambda50": {
+    "timestamp": "2026-02-12T18:23:25.400407",
+    "config": {
+      "batch_size": 16,
+      "lr_g": 0.0002,
+      "l1_lambda": 50,
+      "num_epochs": 50
+    },
+    "metrics": {
+      "psnr": {
+        "mean": 22.14,
+        "std": 2.9
+      },
+      "ssim": {
+        "mean": 0.78,
+        "std": 0.06
+      },
+      "l1_error": {
+        "mean": 0.095
+      }
+    },
+    "notes": "Reduced L1 weight"
+  },
+  "exp_003_lambda150": {
+    "timestamp": "2026-02-12T18:23:25.400539",
+    "config": {
+      "batch_size": 16,
+      "lr_g": 0.0002,
+      "l1_lambda": 150,
+      "num_epochs": 50
+    },
+    "metrics": {
+      "psnr": {
+        "mean": 25.89,
+        "std": 3.3
+      },
+      "ssim": {
+        "mean": 0.85,
+        "std": 0.04
+      },
+      "l1_error": {
+        "mean": 0.072
+      }
+    },
+    "notes": "Increased L1 weight"
+  },
+  "exp_004_lr_decay": {
+    "timestamp": "2026-02-12T18:23:25.400659",
+    "config": {
+      "batch_size": 16,
+      "lr_g": 0.0002,
+      "l1_lambda": 100,
+      "num_epochs": 50
+    },
+    "metrics": {
+      "psnr": {
+        "mean": 25.12,
+        "std": 3.0
+      },
+      "ssim": {
+        "mean": 0.84,
+        "std": 0.04
+      },
+      "l1_error": {
+        "mean": 0.078
+      }
+    },
+    "notes": "StepLR scheduler (gamma=0.5, step=30)"
+  }
+}
