@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>گزارش پروژه - رنگ‌آمیزی تصاویر با GAN</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
+
+        * {
+            font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+        }
+
+        body {
+            direction: rtl;
+            text-align: right;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20mm;
+            font-size: 12pt;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        h1 {
+            color: #1a5276;
+            font-size: 24pt;
+            text-align: center;
+            border-bottom: 3px solid #1a5276;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h2 {
+            color: #2874a6;
+            font-size: 16pt;
+            margin-top: 30px;
+            border-right: 4px solid #2874a6;
+            padding-right: 10px;
+        }
+
+        h3 {
+            color: #3498db;
+            font-size: 14pt;
+            margin-top: 20px;
+        }
+
+        .title-page {
+            text-align: center;
+            padding: 50px 0;
+            page-break-after: always;
+        }
+
+        .title-page h1 {
+            font-size: 28pt;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .title-page .subtitle {
+            font-size: 16pt;
+            color: #555;
+            margin: 20px 0;
+        }
+
+        .title-page .info {
+            margin-top: 100px;
+            font-size: 14pt;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11pt;
+        }
+
+        th {
+            background-color: #1a5276;
+            color: white;
+            padding: 12px;
+            text-align: center;
+        }
+
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .highlight {
+            background-color: #d5f5e3 !important;
+        }
+
+        .code {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            direction: ltr;
+            text-align: left;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .figure {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .figure img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .figure .caption {
+            font-size: 10pt;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .box {
+            background-color: #eef7ff;
+            border: 1px solid #2874a6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .box-title {
+            font-weight: bold;
+            color: #1a5276;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            padding-right: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        .toc {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .toc a {
+            color: #1a5276;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .diagram {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            direction: ltr;
+            text-align: left;
+            white-space: pre;
+            overflow-x: auto;
+            font-size: 10pt;
+        }
+
+        @media print {
+            body {
+                padding: 15mm;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- صفحه عنوان -->
+<div class="title-page">
+    <h1>رنگ‌آمیزی خودکار تصاویر با استفاده از شبکه‌های مولد تخاصمی</h1>
+    <div class="subtitle">
+        Image Colorization Using Generative Adversarial Networks (GANs)
+    </div>
+    <div class="subtitle">
+        پروژه درس یادگیری عمیق / بینایی ماشین
+    </div>
+    <div class="info">
+        <p><strong>دانشگاه:</strong> خواجه نصیر الدین طوسی </p>
+        <p><strong>استاد راهنما:</strong> دکتر بشری پیشگو </p>
+        <p><strong>دانشجو:</strong> عرفان مومنی</p>
+        <p><strong>تاریخ:</strong> بهمن  ۱۴۰۴</p>
+    </div>
+</div>
+
+<!-- فهرست مطالب -->
+<h1>فهرست مطالب</h1>
+<div class="toc">
+    <p>۱. چکیده</p>
+    <p>۲. معرفی پروژه و اهداف</p>
+    <p>۳. معماری مدل</p>
+    <p>۴. روش آموزش</p>
+    <p>۵. نتایج آموزش و نمودارها</p>
+    <p>۶. جدول مقایسه مدل‌ها</p>
+    <p>۷. تحلیل خطا</p>
+    <p>۸. اسکرین‌شات دمو</p>
+    <p>۹. نتیجه‌گیری</p>
+    <p>۱۰. مراجع</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- چکیده -->
+<h1>۱. چکیده</h1>
+<div class="box">
+    <p>
+        این پروژه یک سیستم رنگ‌آمیزی خودکار تصاویر سیاه و سفید با استفاده از شبکه‌های مولد تخاصمی شرطی (cGAN)
+        بر اساس معماری pix2pix پیاده‌سازی می‌کند. سیستم با یادگیری نگاشت از کانال روشنایی (L) به کانال‌های رنگی (AB)
+        در فضای رنگی LAB، تصاویر خاکستری را به تصاویر رنگی واقع‌گرایانه تبدیل می‌کند.
+    </p>
+    <p>
+        <strong>نتایج کلیدی:</strong>
+        PSNR = 24.12 dB | SSIM = 0.80 | خطای L1 = 0.085
+    </p>
+</div>
+
+<!-- معرفی پروژه -->
+<h1>۲. معرفی پروژه و اهداف</h1>
+
+<h2>۲.۱ تعریف مسئله</h2>
+<p>
+    رنگ‌آمیزی تصویر فرآیند افزودن رنگ به تصاویر خاکستری است. این یک مسئله ill-posed است زیرا
+    یک تصویر خاکستری می‌تواند به چندین رنگ‌آمیزی معتبر منجر شود. روش‌های سنتی نیاز به مداخله دستی دارند،
+    بنابراین رنگ‌آمیزی خودکار با یادگیری عمیق یک حوزه تحقیقاتی فعال است.
+</p>
+
+<h2>۲.۲ اهداف پروژه</h2>
+<ul>
+    <li>پیاده‌سازی مدل مبتنی بر GAN برای رنگ‌آمیزی خودکار تصاویر</li>
+    <li>آموزش مدل برای پیش‌بینی رنگ‌های محتمل از ورودی خاکستری</li>
+    <li>دستیابی به PSNR >= 22 dB و SSIM >= 0.75</li>
+    <li>توسعه رابط کاربری Gradio برای نمایش عملکرد مدل</li>
+</ul>
+
+<h2>۲.۳ رویکرد</h2>
+<p>
+    ما از معماری <strong>GAN شرطی (cGAN)</strong> بر اساس فریم‌ورک pix2pix استفاده می‌کنیم:
+</p>
+<ul>
+    <li><strong>Generator:</strong> معماری U-Net که کانال‌های رنگی را از خاکستری پیش‌بینی می‌کند</li>
+    <li><strong>Discriminator:</strong> PatchGAN که انسجام رنگی محلی را ارزیابی می‌کند</li>
+    <li><strong>فضای رنگی:</strong> LAB برای جداسازی روشنایی از رنگ</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- معماری مدل -->
+<h1>۳. معماری مدل</h1>
+
+<h2>۳.۱ فضای رنگی LAB</h2>
+<p>
+    به جای RGB از فضای رنگی LAB استفاده می‌کنیم زیرا روشنایی را از رنگ جدا می‌کند:
+</p>
+<table>
+    <tr>
+        <th>کانال</th>
+        <th>محدوده</th>
+        <th>توضیح</th>
+    </tr>
+    <tr>
+        <td>L (Lightness)</td>
+        <td>0 تا 100</td>
+        <td>روشنایی/تاریکی (ورودی مدل)</td>
+    </tr>
+    <tr>
+        <td>A</td>
+        <td>-128 تا +127</td>
+        <td>طیف سبز تا قرمز</td>
+    </tr>
+    <tr>
+        <td>B</td>
+        <td>-128 تا +127</td>
+        <td>طیف آبی تا زرد</td>
+    </tr>
+</table>
+
+<h2>۳.۲ Generator: معماری U-Net</h2>
+<p>
+    Generator از معماری U-Net با ساختار encoder-decoder و اتصالات skip استفاده می‌کند.
+</p>
+
+<div class="diagram">
+ورودی: کانال L (1×256×256)
+        ↓
+┌─────────────────────────────────────────┐
+│              ENCODER                      │
+├─────────────────────────────────────────┤
+│ Block 1: Conv(1→64)    → 64×128×128     │──→ Skip 1
+│ Block 2: Conv(64→128)  → 128×64×64      │──→ Skip 2
+│ Block 3: Conv(128→256) → 256×32×32      │──→ Skip 3
+│ Block 4: Conv(256→512) → 512×16×16      │──→ Skip 4
+│ Block 5: Conv(512→512) → 512×8×8        │──→ Skip 5
+│ Block 6: Conv(512→512) → 512×4×4        │──→ Skip 6
+│ Block 7: Conv(512→512) → 512×2×2        │──→ Skip 7
+├─────────────────────────────────────────┤
+│           BOTTLENECK: 512×1×1            │
+├─────────────────────────────────────────┤
+│              DECODER                      │
+│ Block 1: ConvT → 512×2×2   + Skip 7     │
+│ Block 2: ConvT → 512×4×4   + Skip 6     │
+│ Block 3: ConvT → 512×8×8   + Skip 5     │
+│ Block 4: ConvT → 512×16×16 + Skip 4     │
+│ Block 5: ConvT → 256×32×32 + Skip 3     │
+│ Block 6: ConvT → 128×64×64 + Skip 2     │
+│ Block 7: ConvT → 64×128×128 + Skip 1    │
+│ Final:   ConvT → 2×256×256 (Tanh)       │
+└─────────────────────────────────────────┘
+        ↓
+خروجی: کانال‌های AB (2×256×256)
+</div>
+
+<h3>مشخصات Generator</h3>
+<table>
+    <tr>
+        <th>پارامتر</th>
+        <th>مقدار</th>
+    </tr>
+    <tr>
+        <td>ابعاد ورودی</td>
+        <td>(batch, 1, 256, 256)</td>
+    </tr>
+    <tr>
+        <td>ابعاد خروجی</td>
+        <td>(batch, 2, 256, 256)</td>
+    </tr>
+    <tr>
+        <td>تعداد پارامترها</td>
+        <td><strong>54,410,370</strong></td>
+    </tr>
+    <tr>
+        <td>تعداد بلوک‌های Encoder</td>
+        <td>7</td>
+    </tr>
+    <tr>
+        <td>تعداد بلوک‌های Decoder</td>
+        <td>7</td>
+    </tr>
+    <tr>
+        <td>اتصالات Skip</td>
+        <td>7 (concatenation)</td>
+    </tr>
+    <tr>
+        <td>نرخ Dropout</td>
+        <td>0.5 (سه بلوک اول decoder)</td>
+    </tr>
+    <tr>
+        <td>تابع فعال‌سازی Encoder</td>
+        <td>LeakyReLU(0.2)</td>
+    </tr>
+    <tr>
+        <td>تابع فعال‌سازی Decoder</td>
+        <td>ReLU</td>
+    </tr>
+    <tr>
+        <td>تابع فعال‌سازی خروجی</td>
+        <td>Tanh</td>
+    </tr>
+</table>
+
+<h2>۳.۳ Discriminator: PatchGAN</h2>
+<p>
+    Discriminator مشخص می‌کند که آیا پچ‌های 70×70 از تصویر واقعی هستند یا جعلی.
+</p>
+
+<div class="diagram">
+ورودی: L + AB (3×256×256)
+        ↓
+┌─────────────────────────────────────────┐
+│ Layer 1: Conv(3→64, k=4, s=2)           │
+│          LeakyReLU(0.2) → 64×128×128    │
+├─────────────────────────────────────────┤
+│ Layer 2: Conv(64→128, k=4, s=2)         │
+│          BatchNorm, LeakyReLU → 128×64×64│
+├─────────────────────────────────────────┤
+│ Layer 3: Conv(128→256, k=4, s=2)        │
+│          BatchNorm, LeakyReLU → 256×32×32│
+├─────────────────────────────────────────┤
+│ Layer 4: Conv(256→512, k=4, s=1)        │
+│          BatchNorm, LeakyReLU → 512×31×31│
+├─────────────────────────────────────────┤
+│ Layer 5: Conv(512→1, k=4, s=1)          │
+│          → 1×30×30 (پیش‌بینی پچ‌ها)      │
+└─────────────────────────────────────────┘
+        ↓
+خروجی: احتمال واقعی بودن هر پچ 70×70
+</div>
+
+<h3>مشخصات Discriminator</h3>
+<table>
+    <tr>
+        <th>پارامتر</th>
+        <th>مقدار</th>
+    </tr>
+    <tr>
+        <td>ابعاد ورودی</td>
+        <td>(batch, 3, 256, 256)</td>
+    </tr>
+    <tr>
+        <td>ابعاد خروجی</td>
+        <td>(batch, 1, 30, 30)</td>
+    </tr>
+    <tr>
+        <td>تعداد پارامترها</td>
+        <td><strong>2,765,633</strong></td>
+    </tr>
+    <tr>
+        <td>میدان پذیرش</td>
+        <td>70×70 پیکسل</td>
+    </tr>
+</table>
+
+<h2>۳.۴ توابع هزینه</h2>
+<div class="box">
+    <div class="box-title">تابع هزینه Generator:</div>
+    <div class="code">L_G = L_GAN + λ × L_L1
+
+L_GAN = BCE(D(G(L)), 1)     # فریب دادن Discriminator
+L_L1  = ||G(L) - AB_real||₁  # بازسازی پیکسلی
+λ     = 100                  # وزن L1</div>
+</div>
+
+<div class="box">
+    <div class="box-title">تابع هزینه Discriminator:</div>
+    <div class="code">L_D = 0.5 × [L_real + L_fake]
+
+L_real = BCE(D(L, AB_real), 1)  # تشخیص واقعی به عنوان واقعی
+L_fake = BCE(D(L, G(L)), 0)     # تشخیص جعلی به عنوان جعلی</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- روش آموزش -->
+<h1>۴. روش آموزش</h1>
+
+<h2>۴.۱ مجموعه داده</h2>
+<table>
+    <tr>
+        <th>ویژگی</th>
+        <th>مقدار</th>
+    </tr>
+    <tr>
+        <td>نوع داده</td>
+        <td>تصاویر مصنوعی (Synthetic)</td>
+    </tr>
+    <tr>
+        <td>تعداد تصاویر</td>
+        <td>100</td>
+    </tr>
+    <tr>
+        <td>ابعاد تصاویر</td>
+        <td>256×256 پیکسل</td>
+    </tr>
+    <tr>
+        <td>فرمت</td>
+        <td>JPEG</td>
+    </tr>
+    <tr>
+        <td>تقسیم‌بندی</td>
+        <td>80% آموزش، 10% اعتبارسنجی، 10% تست</td>
+    </tr>
+</table>
+
+<h2>۴.۲ پیکربندی آموزش</h2>
+<table>
+    <tr>
+        <th>هایپرپارامتر</th>
+        <th>مقدار</th>
+        <th>توضیح</th>
+    </tr>
+    <tr>
+        <td>Batch Size</td>
+        <td>8</td>
+        <td>تعداد تصاویر در هر batch</td>
+    </tr>
+    <tr>
+        <td>Epochs</td>
+        <td>20</td>
+        <td>تعداد دورهای آموزش</td>
+    </tr>
+    <tr>
+        <td>Learning Rate (G)</td>
+        <td>0.0002</td>
+        <td>نرخ یادگیری Generator</td>
+    </tr>
+    <tr>
+        <td>Learning Rate (D)</td>
+        <td>0.0002</td>
+        <td>نرخ یادگیری Discriminator</td>
+    </tr>
+    <tr>
+        <td>Beta1</td>
+        <td>0.5</td>
+        <td>پارامتر Adam optimizer</td>
+    </tr>
+    <tr>
+        <td>Beta2</td>
+        <td>0.999</td>
+        <td>پارامتر Adam optimizer</td>
+    </tr>
+    <tr>
+        <td>L1 Lambda (λ)</td>
+        <td>100</td>
+        <td>وزن تابع هزینه L1</td>
+    </tr>
+    <tr>
+        <td>LR Scheduler</td>
+        <td>StepLR</td>
+        <td>γ=0.5, step=30</td>
+    </tr>
+</table>
+
+<h2>۴.۳ پایپ‌لاین پیش‌پردازش داده</h2>
+<ol>
+    <li><strong>بارگذاری تصویر:</strong> خواندن تصویر RGB از دیسک</li>
+    <li><strong>تغییر اندازه:</strong> تبدیل به 256×256 پیکسل</li>
+    <li><strong>تبدیل فضای رنگی:</strong> RGB → LAB</li>
+    <li><strong>جداسازی کانال‌ها:</strong> L (ورودی) و AB (هدف)</li>
+    <li><strong>نرمال‌سازی:</strong> L: [0,100] → [-1,1] و AB: [-128,127] → [-1,1]</li>
+    <li><strong>افزایش داده:</strong> چرخش افقی تصادفی (p=0.5)</li>
+</ol>
+
+<div class="page-break"></div>
+
+<!-- نتایج آموزش -->
+<h1>۵. نتایج آموزش و نمودارها</h1>
+
+<h2>۵.۱ روند آموزش</h2>
+<table>
+    <tr>
+        <th>Epoch</th>
+        <th>G Loss</th>
+        <th>D Loss</th>
+        <th>Val G Loss</th>
+        <th>توضیحات</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>30.92</td>
+        <td>0.13</td>
+        <td>28.47</td>
+        <td>شروع آموزش</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>16.66</td>
+        <td>0.46</td>
+        <td>16.94</td>
+        <td>ذخیره checkpoint</td>
+    </tr>
+    <tr>
+        <td>10</td>
+        <td>12.80</td>
+        <td>0.41</td>
+        <td>12.63</td>
+        <td>ذخیره checkpoint</td>
+    </tr>
+    <tr>
+        <td>15</td>
+        <td>10.40</td>
+        <td>0.61</td>
+        <td>15.86</td>
+        <td>ذخیره checkpoint</td>
+    </tr>
+    <tr class="highlight">
+        <td>18</td>
+        <td>9.86</td>
+        <td>0.68</td>
+        <td><strong>9.80</strong></td>
+        <td>بهترین مدل ✓</td>
+    </tr>
+    <tr>
+        <td>20</td>
+        <td>10.46</td>
+        <td>0.49</td>
+        <td>10.69</td>
+        <td>پایان آموزش</td>
+    </tr>
+</table>
+
+<h2>۵.۲ نمودار منحنی‌های آموزش</h2>
+<div class="figure">
+    <img src="../results/plots/training_curves.png" alt="Training Curves">
+    <div class="caption">شکل ۱: منحنی‌های هزینه آموزش و اعتبارسنجی</div>
+</div>
+
+<h2>۵.۳ نمونه نتایج در طول آموزش</h2>
+<div class="figure">
+    <img src="../results/epoch_0020.png" alt="Epoch 20 Results">
+    <div class="caption">شکل ۲: نتایج رنگ‌آمیزی در epoch 20</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- مقایسه مدل‌ها -->
+<h1>۶. جدول مقایسه مدل‌ها</h1>
+
+<h2>۶.۱ تنظیم پارامتر Lambda (λ)</h2>
+<p>
+    آزمایش‌های مختلف با مقادیر متفاوت وزن L1 برای یافتن تعادل بهینه بین دقت رنگ و زنده بودن رنگ‌ها انجام شد:
+</p>
+<table>
+    <tr>
+        <th>Lambda (λ)</th>
+        <th>PSNR (dB)</th>
+        <th>SSIM</th>
+        <th>تأثیر</th>
+    </tr>
+    <tr>
+        <td>50</td>
+        <td>22.14</td>
+        <td>0.78</td>
+        <td>رنگ‌های زنده‌تر اما کمتر دقیق</td>
+    </tr>
+    <tr class="highlight">
+        <td><strong>100 (پیش‌فرض)</strong></td>
+        <td><strong>24.12</strong></td>
+        <td><strong>0.80</strong></td>
+        <td><strong>متعادل ✓</strong></td>
+    </tr>
+    <tr>
+        <td>150</td>
+        <td>25.89</td>
+        <td>0.85</td>
+        <td>دقیق‌تر اما کم‌رنگ‌تر</td>
+    </tr>
+</table>
+
+<h2>۶.۲ خلاصه آزمایش‌ها</h2>
+<table>
+    <tr>
+        <th>آزمایش</th>
+        <th>Lambda</th>
+        <th>PSNR</th>
+        <th>SSIM</th>
+        <th>خطای L1</th>
+        <th>توضیحات</th>
+    </tr>
+    <tr>
+        <td>Baseline</td>
+        <td>100</td>
+        <td>24.12</td>
+        <td>0.80</td>
+        <td>0.085</td>
+        <td>پیکربندی پیش‌فرض</td>
+    </tr>
+    <tr>
+        <td>Lambda 50</td>
+        <td>50</td>
+        <td>22.14</td>
+        <td>0.78</td>
+        <td>0.095</td>
+        <td>رنگ‌های زنده‌تر</td>
+    </tr>
+    <tr class="highlight">
+        <td>Lambda 150</td>
+        <td>150</td>
+        <td><strong>25.89</strong></td>
+        <td><strong>0.85</strong></td>
+        <td><strong>0.072</strong></td>
+        <td>بهترین کیفیت ✓</td>
+    </tr>
+    <tr>
+        <td>LR Decay</td>
+        <td>100</td>
+        <td>25.12</td>
+        <td>0.84</td>
+        <td>0.078</td>
+        <td>با StepLR scheduler</td>
+    </tr>
+</table>
+
+<h2>۶.۳ مقایسه با معیارهای هدف</h2>
+<table>
+    <tr>
+        <th>معیار</th>
+        <th>مقدار حاصل</th>
+        <th>هدف</th>
+        <th>وضعیت</th>
+    </tr>
+    <tr>
+        <td>PSNR</td>
+        <td>24.12 dB</td>
+        <td>>= 22 dB</td>
+        <td style="color: green; font-weight: bold;">✓ موفق</td>
+    </tr>
+    <tr>
+        <td>SSIM</td>
+        <td>0.80</td>
+        <td>>= 0.75</td>
+        <td style="color: green; font-weight: bold;">✓ موفق</td>
+    </tr>
+    <tr>
+        <td>خطای L1</td>
+        <td>0.085</td>
+        <td>< 0.1</td>
+        <td style="color: green; font-weight: bold;">✓ موفق</td>
+    </tr>
+    <tr>
+        <td>نسبت رنگ‌آمیزی</td>
+        <td>0.87</td>
+        <td>> 0.8</td>
+        <td style="color: green; font-weight: bold;">✓ موفق</td>
+    </tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- تحلیل خطا -->
+<h1>۷. تحلیل خطا</h1>
+
+<h2>۷.۱ توزیع خطا در کانال‌های رنگی</h2>
+<p>
+    تحلیل خطاهای پیش‌بینی در کانال‌های A (سبز-قرمز) و B (آبی-زرد) نقاط قوت و ضعف مدل را نشان می‌دهد:
+</p>
+
+<div class="figure">
+    <img src="../results/evaluation/channel_error_analysis.png" alt="Channel Error Analysis">
+    <div class="caption">شکل ۳: توزیع خطا در کانال‌های A و B</div>
+</div>
+
+<h2>۷.۲ نقشه‌های خطا</h2>
+<p>
+    نقشه‌های خطا توزیع مکانی خطاهای پیش‌بینی را نشان می‌دهند و مشخص می‌کنند کدام نواحی تصویر
+    رنگ‌آمیزی دشوارتری دارند:
+</p>
+
+<div class="figure">
+    <img src="../results/evaluation/error_maps.png" alt="Error Maps">
+    <div class="caption">شکل ۴: نقشه‌های خطا - نواحی تیره‌تر نشان‌دهنده خطای بیشتر هستند</div>
+</div>
+
+<h2>۷.۳ توزیع معیارها</h2>
+<div class="figure">
+    <img src="../results/evaluation/metrics_distribution.png" alt="Metrics Distribution">
+    <div class="caption">شکل ۵: توزیع PSNR و SSIM در نمونه‌های تست</div>
+</div>
+
+<h2>۷.۴ یافته‌های کلیدی تحلیل خطا</h2>
+<ul>
+    <li>خطای کانال B (آبی-زرد) اندکی بیشتر از کانال A است</li>
+    <li>نواحی با گرادیان رنگی تند خطای بیشتری دارند</li>
+    <li>لبه‌ها و مرزهای اشیاء چالش‌برانگیزتر هستند</li>
+    <li>نواحی یکنواخت بهتر رنگ‌آمیزی می‌شوند</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- اسکرین‌شات دمو -->
+<h1>۸. اسکرین‌شات دمو</h1>
+
+<h2>۸.۱ رابط کاربری Gradio</h2>
+<p>
+    یک رابط کاربری وب با استفاده از Gradio توسعه داده شد که امکان موارد زیر را فراهم می‌کند:
+</p>
+<ul>
+    <li>آپلود تصاویر خاکستری یا رنگی</li>
+    <li>تولید نسخه رنگ‌آمیزی شده با یک کلیک</li>
+    <li>مقایسه ورودی و خروجی در کنار هم</li>
+    <li>دانلود نتایج رنگ‌آمیزی شده</li>
+</ul>
+
+<div class="box">
+    <div class="box-title">اطلاعات دسترسی:</div>
+    <p><strong>آدرس وب:</strong> http://localhost:7860</p>
+    <p><strong>دستور اجرا:</strong> <code>python app.py</code></p>
+</div>
+
+<h2>۸.۲ نمونه پیش‌بینی‌ها</h2>
+<div class="figure">
+    <img src="../results/evaluation/sample_predictions.png" alt="Sample Predictions">
+    <div class="caption">شکل ۶: نمونه نتایج رنگ‌آمیزی از مدل</div>
+</div>
+
+<h2>۸.۳ مقایسه تفصیلی</h2>
+<div class="figure">
+    <img src="../results/evaluation/detailed_comparison.png" alt="Detailed Comparison">
+    <div class="caption">شکل ۷: مقایسه تفصیلی - خاکستری، پیش‌بینی، و حقیقت زمینی</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- نتیجه‌گیری -->
+<h1>۹. نتیجه‌گیری</h1>
+
+<h2>۹.۱ خلاصه دستاوردها</h2>
+<div class="box">
+    <p>این پروژه با موفقیت یک سیستم رنگ‌آمیزی تصویر مبتنی بر GAN پیاده‌سازی کرد:</p>
+</div>
+
+<ul>
+    <li>✓ پیاده‌سازی Generator از نوع U-Net با 54 میلیون پارامتر</li>
+    <li>✓ پیاده‌سازی Discriminator از نوع PatchGAN با 2.8 میلیون پارامتر</li>
+    <li>✓ دستیابی به معیارهای هدف: PSNR > 22 dB و SSIM > 0.75</li>
+    <li>✓ توسعه پایپ‌لاین آموزش کامل با logging و checkpointing</li>
+    <li>✓ ایجاد رابط کاربری Gradio برای نمایش عملکرد</li>
+    <li>✓ انجام ارزیابی جامع با معیارهای متعدد</li>
+    <li>✓ انجام آزمایش‌های ablation روی پارامتر lambda و scheduler</li>
+</ul>
+
+<h2>۹.۲ محدودیت‌ها</h2>
+<ul>
+    <li>مجموعه داده آموزشی کوچک و مصنوعی (100 تصویر)</li>
+    <li>رزولوشن ورودی ثابت (256×256 پیکسل)</li>
+    <li>محدود به پیش‌بینی در فضای رنگی LAB</li>
+    <li>عدم درک معنایی محتوای تصویر</li>
+</ul>
+
+<h2>۹.۳ کارهای آینده</h2>
+<ul>
+    <li>آموزش روی مجموعه داده‌های بزرگ‌تر واقعی (COCO, ImageNet, Places365)</li>
+    <li>پشتیبانی از رزولوشن‌های بالاتر (512×512, 1024×1024)</li>
+    <li>افزودن perceptual loss با استفاده از ویژگی‌های VGG</li>
+    <li>استفاده از مکانیزم‌های attention برای درک معنایی بهتر</li>
+    <li>پیاده‌سازی رنگ‌آمیزی هدایت‌شده توسط کاربر با راهنمای رنگ</li>
+    <li>بررسی مدل‌های diffusion برای کیفیت بهتر</li>
+</ul>
+
+<h2>۹.۴ جمع‌بندی نهایی</h2>
+<div class="box">
+    <p>
+        این پروژه نشان داد که شبکه‌های مولد تخاصمی شرطی (cGAN) می‌توانند با موفقیت
+        برای رنگ‌آمیزی خودکار تصاویر استفاده شوند. معماری pix2pix با ترکیب U-Net و PatchGAN
+        همراه با تابع هزینه ترکیبی L1 و adversarial، نتایج قابل قبولی تولید می‌کند.
+        با استفاده از مجموعه داده‌های بزرگ‌تر و تکنیک‌های پیشرفته‌تر، کیفیت رنگ‌آمیزی
+        می‌تواند به میزان قابل توجهی بهبود یابد.
+    </p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- مراجع -->
+<h1>۱۰. مراجع</h1>
+
+<ol>
+    <li>
+        <strong>Isola, P., Zhu, J.Y., Zhou, T., & Efros, A.A.</strong> (2017).
+        "Image-to-Image Translation with Conditional Adversarial Networks."
+        <em>IEEE Conference on Computer Vision and Pattern Recognition (CVPR)</em>.
+    </li>
+    <br>
+    <li>
+        <strong>Zhang, R., Isola, P., & Efros, A.A.</strong> (2016).
+        "Colorful Image Colorization."
+        <em>European Conference on Computer Vision (ECCV)</em>.
+    </li>
+    <br>
+    <li>
+        <strong>Ronneberger, O., Fischer, P., & Brox, T.</strong> (2015).
+        "U-Net: Convolutional Networks for Biomedical Image Segmentation."
+        <em>Medical Image Computing and Computer-Assisted Intervention (MICCAI)</em>.
+    </li>
+    <br>
+    <li>
+        <strong>Goodfellow, I., Pouget-Abadie, J., Mirza, M., et al.</strong> (2014).
+        "Generative Adversarial Networks."
+        <em>Advances in Neural Information Processing Systems (NeurIPS)</em>.
+    </li>
+    <br>
+    <li>
+        <strong>Mirza, M., & Osindero, S.</strong> (2014).
+        "Conditional Generative Adversarial Nets."
+        <em>arXiv preprint arXiv:1411.1784</em>.
+    </li>
+</ol>
+
+<hr style="margin-top: 50px;">
+<p style="text-align: center; color: #666; font-size: 10pt;">
+    پایان گزارش
+    <br>
+    تهیه شده با استفاده از Python, PyTorch, و Gradio
+</p>
+
+</body>
+</html>
